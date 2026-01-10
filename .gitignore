@@ -1,0 +1,11 @@
+# Infra templates (safe to share)
+infra/*.template
+infra/*.sql.template
+
+# Notebooks reais com secrets (NÃO versionar)
+infra/00_setup.ipynb
+
+# Outros
+.env
+*.log
+.DS_Store
