@@ -2,8 +2,9 @@
 infra/*.template
 infra/*.sql.template
 
-# Notebooks reais com secrets (NÃO versionar)
-infra/00_setup.ipynb
+# Notebooks reais (NÃO versionados)
+src/setup/00_prerequisites.ipynb
+src/config/settings.py
 
 # Outros
 .env
