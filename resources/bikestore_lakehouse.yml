@@ -1,0 +1,166 @@
+resources:
+  jobs:
+    bikes_jobs:
+      name: bikes -jobs
+      tasks:
+        - task_key: bronze_table_brands
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/01_bronze/01_bronze_pipeline
+            base_parameters:
+              table_name: brands
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: bronze_table_categories
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/01_bronze/01_bronze_pipeline
+            base_parameters:
+              table_name: categories
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: bronze_table_customers
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/01_bronze/01_bronze_pipeline
+            base_parameters:
+              table_name: customers
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: bronze_table_order_items
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/01_bronze/01_bronze_pipeline
+            base_parameters:
+              table_name: order_items
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: bronze_table_orders
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/01_bronze/01_bronze_pipeline
+            base_parameters:
+              table_name: orders
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: bronze_table_products
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/01_bronze/01_bronze_pipeline
+            base_parameters:
+              table_name: products
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: bronze_table_staffs
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/01_bronze/01_bronze_pipeline
+            base_parameters:
+              table_name: staffs
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: bronze_table_stocks
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/01_bronze/01_bronze_pipeline
+            base_parameters:
+              table_name: stocks
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: bronze_table_stores
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/01_bronze/01_bronze_pipeline
+            base_parameters:
+              table_name: stores
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: validation_bronze
+          depends_on:
+            - task_key: bronze_table_stocks
+            - task_key: bronze_table_staffs
+            - task_key: bronze_table_products
+            - task_key: bronze_table_customers
+            - task_key: bronze_table_stores
+            - task_key: bronze_table_orders
+            - task_key: bronze_table_categories
+            - task_key: bronze_table_order_items
+            - task_key: bronze_table_brands
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/01_bronze/02_validation_bronze
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: silver_table_brands
+          depends_on:
+            - task_key: validation_bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/02_silver/01_silver_pipeline
+            base_parameters:
+              table_name: brands
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: silver_table_categories
+          depends_on:
+            - task_key: validation_bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/02_silver/01_silver_pipeline
+            base_parameters:
+              table_name: categories
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: silver_table_customers
+          depends_on:
+            - task_key: validation_bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/02_silver/01_silver_pipeline
+            base_parameters:
+              table_name: customers
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: silver_table_orders
+          depends_on:
+            - task_key: validation_bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/02_silver/01_silver_pipeline
+            base_parameters:
+              table_name: orders
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: silver_table_order_items
+          depends_on:
+            - task_key: validation_bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/02_silver/01_silver_pipeline
+            base_parameters:
+              table_name: order_items
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: silver_table_products
+          depends_on:
+            - task_key: validation_bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/02_silver/01_silver_pipeline
+            base_parameters:
+              table_name: products
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: silver_table_staffs
+          depends_on:
+            - task_key: validation_bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/02_silver/01_silver_pipeline
+            base_parameters:
+              table_name: staffs
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: silver_table_stocks
+          depends_on:
+            - task_key: validation_bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/02_silver/01_silver_pipeline
+            base_parameters:
+              table_name: stocks
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+        - task_key: silver_table_stores
+          depends_on:
+            - task_key: validation_bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/notebooks/02_silver/01_silver_pipeline
+            base_parameters:
+              table_name: stores
+            source: WORKSPACE
+          existing_cluster_id: 0103-165844-69qqs2yo
+      queue:
+        enabled: true
