@@ -3,7 +3,7 @@ infra/*.template
 infra/*.sql.template
 
 # Notebooks reais (NÃO versionados)
-src/setup/00_prerequisites.ipynb
+notebooks/00_setup/00_prerequisites.ipynb
 src/config/settings.py
 
 # Outros
