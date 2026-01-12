@@ -23,25 +23,8 @@ Este projeto foi desenhado como um **produto de dados de escopo fechado**, com e
 
 ## Arquitetura Geral
 
-```
-Azure Data Lake (ADLS Gen2)
-        │
-        ▼
-   Bronze Layer
-(raw / incremental / schema-on-read)
-        │
-        ▼
- Bronze Validation
- (checks básicos de qualidade)
-        │
-        ▼
-   Silver Layer
- (dados limpos, deduplicados e confiáveis)
-        │
-        ▼
-   Gold Layer (futuro)
- (features, métricas e agregações)
-```
+
+![](/Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/img/Azure Data Lake.png)
 
 Tecnologias:
 
@@ -58,34 +41,46 @@ Tecnologias:
 ```
 data-lake-databricks/
 ├── README.md
-├── requirements.txt
-├── .env.example
 ├── src/
-│   ├── __init__.py
 │   ├── config/
-│   │   └── settings.py              # Load env vars, layer paths
+│   │   └── 01.settings.py              # Load env vars, layer paths
 │   ├── common/
-│   │   ├── utils.py                 # Helpers: logging, Spark utils
-│   │   └── validators.py            # Data quality checks
+│   │   └── utils.py                 # Helpers: logging, Spark utils
 │   ├── bronze/
-│   │   ├── ingest_treat.py          # Raw load, add metadata
+│   │   ├── ingest.py          # Raw load, add metadata
 │   │   └── upload.py                # Write to Delta bronze tables
 │   ├── silver/
-│   │   ├── treat.py                 # Clean, dedup from bronze
-│   │   └── upload.py                # Write to silver
+│   │   ├── base.py
+│   │   ├── registry.py
+│   │   ├── categories.py
+│   │   ├── customers.py
+│   │   ├── order_items.py
+│   │   ├── orders.py
+│   │   ├── products.py
+│   │   ├── brands.py 
+│   │   ├── staffs.py
+│   │   ├── stores.py
+│   │   └── stocks.py
 │   ├── gold/
 │   │   ├── treat.py                 # Aggregate business logic
 │   │   └── upload.py                # Write gold tables
-│   └── setup_environment.py         # Init Spark, mounts, clusters
 ├── notebooks/                       # Optional: interactive testing
-│   ├── 00_setup.ipynb               # Calls src/setup_environment.py
-│   ├── 01_bronze_pipeline.ipynb     # %run src/bronze/ingest_treat.py
-│   └── ...                          # Silver/Gold equivalents
-├── tests/                           # Pytest for src modules
+│   ├── 00_setup/
+│   │   └── 00_infrastructure.ipynb  # Write to Delta bronze 00_infrastructure
+│   ├── 01_bronze/
+│   │   ├── 01_bronze_pipeline.ipynb  
+│   │   └── 02_validation_bronze.ipynb  # Data quality checks
+│   ├── 02_silver/
+│   │   └── 01_silver_pipeline.ipynb  
+│   └── 03_gold/
+│       └── 
 ├── resources/                       # Databricks Jobs JSON defs 
 │   └── jobs/
 │       └── bikestore_lakehouse.yml
+├── tests/                           # Pytest for src modules
 └── data/                            # Samples for local dev
+
+
 
 ```
 
