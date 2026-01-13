@@ -24,7 +24,7 @@ Este projeto foi desenhado como um **produto de dados de escopo fechado**, com e
 ## Arquitetura Geral
 
 
-![](/Workspace/Users/nayaradatabricks@gmail.com/adls-databricks-lakehouse-pipeline/img/Azure Data Lake.png)
+![](img/Azure Data Lake.png)
 
 Tecnologias:
 
