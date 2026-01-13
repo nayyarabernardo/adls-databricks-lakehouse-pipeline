@@ -1,0 +1,13 @@
+# Infra templates (safe to share)
+infra/*.template
+infra/*.sql.template
+
+# Notebooks reais (NÃO versionados)
+notebooks/00_setup/00_prerequisites.ipynb
+src/config/settings.py
+
+# Outros
+.env
+*.log
+.DS_Store
+ARQ
