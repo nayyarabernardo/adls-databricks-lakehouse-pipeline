@@ -1,12 +1,12 @@
-from src.silver.customers import build_customers_silver
-from src.silver.brands import build_brands_silver
-from src.silver.products import build_products_silver
-from src.silver.orders import build_orders_silver 
-from src.silver.staffs import build_staffs_silver
-from src.silver.stocks import build_stocks_silver
-from src.silver.stores import build_stores_silver
-from src.silver.order_items import build_order_items_silver
-from src.silver.categories import build_categories_silver
+from src.silver.tables.customers import build_customers_silver
+from src.silver.tables.brands import build_brands_silver
+from src.silver.tables.products import build_products_silver
+from src.silver.tables.orders import build_orders_silver 
+from src.silver.tables.staffs import build_staffs_silver
+from src.silver.tables.stocks import build_stocks_silver
+from src.silver.tables.stores import build_stores_silver
+from src.silver.tables.order_items import build_order_items_silver
+from src.silver.tables.categories import build_categories_silver
 
 # futuramente:
 # from src.silver.orders import build_orders_silver

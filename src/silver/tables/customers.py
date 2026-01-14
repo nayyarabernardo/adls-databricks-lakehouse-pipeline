@@ -1,7 +1,7 @@
 from pyspark.sql import functions as F
-from src.silver.base import read_bronze, write_silver, add_ingestion_columns
+from src.silver.setup.base import read_bronze, write_silver, add_ingestion_columns
 
-def build_staffs_silver(
+def build_customers_silver(
     spark,
     bronze_path: str,
     silver_table: str,
@@ -12,16 +12,16 @@ def build_staffs_silver(
     df_clean = (
         df
         .select(
-            "staff_id",
+            "customer_id",
             "first_name",
             "last_name",
-            "email",
             "phone",
-            "active",
-            "store_id",
-            "manager_id"
+            "email",
+            "street",
+            "city",
+            "state",
+            "zip_code"
         )
-        .filter(F.col("staff_id").isNotNull())
     )
 
     df_final = add_ingestion_columns(df_clean)

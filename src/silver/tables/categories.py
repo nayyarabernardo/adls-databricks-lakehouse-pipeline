@@ -1,7 +1,7 @@
 from pyspark.sql import functions as F
-from src.silver.base import read_bronze, write_silver, add_ingestion_columns
+from src.silver.setup.base import read_bronze, write_silver, add_ingestion_columns
 
-def build_products_silver(
+def build_categories_silver(
     spark,
     bronze_path: str,
     silver_table: str,
@@ -12,15 +12,13 @@ def build_products_silver(
     df_clean = (
         df
         .select(
-        "product_id",
-        "product_name",
-        "brand_id",
-        "category_id",
-        "model_year",
-        "list_price"
+            "category_id",
+            "category_name"
         )
-        .filter(F.col("product_id").isNotNull())
+        .filter(F.col("category_id").isNotNull())
     )
+
+
 
     df_final = add_ingestion_columns(df_clean)
 

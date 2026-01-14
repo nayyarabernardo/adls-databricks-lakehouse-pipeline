@@ -1,4 +1,4 @@
-from src.silver.base import read_bronze, write_silver, add_ingestion_columns
+from src.silver.setup.base import read_bronze, write_silver, add_ingestion_columns
 
 def build_brands_silver(
     spark,
