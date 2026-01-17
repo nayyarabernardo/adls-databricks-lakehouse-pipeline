@@ -26,3 +26,5 @@ def ingest_table(metadata: dict, spark):
     )
 
     print(f"Bronze | {table_name} ingerida com sucesso")
+
+
