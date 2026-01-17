@@ -7,10 +7,12 @@ def build_customers_silver(
     silver_table: str,
     silver_path: str
 ):
-    df = read_bronze(spark, bronze_path)
+    # ===== Read =====
+    df_customers = read_bronze(spark, bronze_path)
 
+    # ===== Clean =====
     df_clean = (
-        df
+        df_customers
         .select(
             "customer_id",
             "first_name",
@@ -22,10 +24,21 @@ def build_customers_silver(
             "state",
             "zip_code"
         )
+        .filter(F.col("customer_id").isNotNull())
+        .filter(
+            (F.col("phone").isNotNull()) &
+            (~F.upper(F.col("phone")).isin("NULL", "NULL "))
+        )
+        .filter(
+            (F.col("email").isNotNull()) &
+            (~F.upper(F.col("email")).isin("NULL", "NULL "))
+        )
     )
 
+    # ===== Ingestion metadata =====
     df_final = add_ingestion_columns(df_clean)
 
+    # ===== Write =====
     write_silver(
         spark,
         df_final,
