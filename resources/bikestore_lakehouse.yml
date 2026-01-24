@@ -2,6 +2,15 @@ resources:
   jobs:
     bikestore_lakehouse:
       name: bikestore_lakehouse
+      email_notifications:
+        on_start:
+          - {STORAGE_ACCOUNT_EMAIL}
+        on_failure:
+          - {STORAGE_ACCOUNT_EMAIL}
+      schedule:
+        quartz_cron_expression: 17 0 14 * * ?
+        timezone_id: America/Maceio
+        pause_status: UNPAUSED
       tasks:
         - task_key: bronze_table_brands
           notebook_task:
@@ -137,3 +146,4 @@ resources:
           existing_cluster_id: 0103-165844-69qqs2yo
       queue:
         enabled: true
+
