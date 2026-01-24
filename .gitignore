@@ -11,3 +11,4 @@ src/config/settings.py
 *.log
 .DS_Store
 ARQ
+dash
