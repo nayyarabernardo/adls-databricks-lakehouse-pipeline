@@ -1,32 +1,43 @@
 # BikeStore Lakehouse – Data Foundation
 
-Este projeto implementa um **Data Lakehouse** para o domínio **BikeStore**, com foco em **qualidade, rastreabilidade e escalabilidade**, servindo como **base para criação de variáveis, análises e produtos analíticos**.
+Este projeto implementa um **Data Lakehouse** para o domínio **BikeStore**, com foco em **qualidade, rastreabilidade, governança e escalabilidade**, servindo como **fundação para análises, métricas de negócio e produtos analíticos**.
 
-A arquitetura segue o padrão **Medallion (Bronze → Silver → Gold)**, com ingestão estruturada, validações e transformações orientadas a domínio.
+A arquitetura segue o padrão **Medallion (Bronze → Silver → Gold)**, com ingestão estruturada, validações explícitas e transformações orientadas a domínio.
 
 ---
 
 ## Objetivo do Projeto
 
 * Centralizar dados operacionais do BikeStore em um **Lakehouse**
-* Garantir **dados confiáveis (trusted data)** na camada Silver
-* Preparar a base para:
+* Garantir **dados confiáveis (Trusted Data)** na camada Silver
+* Disponibilizar dados prontos para consumo na camada Gold, suportando:
 
-  * criação de **Book de Variáveis**
+  * métricas de negócio
   * análises analíticas
   * produtos de dados
-  * futuros modelos de ML
+  * evolução para Feature Store e ML
 
-Este projeto foi desenhado como um **produto de dados de escopo fechado**, com entidades bem definidas e pipelines explícitos.
+Este projeto foi desenhado como um **produto de dados de escopo fechado**, com entidades bem definidas, pipelines explícitos e foco em previsibilidade operacional.
 
 ---
 
 ## Arquitetura Geral
 
+### Visão Conceitual (Lakehouse / Medallion)
 
-![](https://github.com/nayyarabernardo/adls-databricks-lakehouse-pipeline/blob/dev/img/Azure%20Data%20Lake.png)
+![](https://github.com/nayyarabernardo/adls-databricks-lakehouse-pipeline/blob/main/img/azure.png)
 
-Tecnologias:
+---
+
+### Visão Técnica do Pipeline
+
+Abaixo está a arquitetura real de execução dos pipelines, refletindo tabelas, validações e dependências entre camadas:
+
+![](https://github.com/nayyarabernardo/adls-databricks-lakehouse-pipeline/blob/main/img/arq.png)
+
+---
+
+### Tecnologias Utilizadas
 
 * **Databricks**
 * **Apache Spark**
@@ -43,14 +54,14 @@ data-lake-databricks/
 ├── README.md
 ├── src/
 │   ├── config/
-│   │   └── 01.settings.py              # Load env vars, layer paths
+│   │   └── 01.settings.py              # Env vars, paths por camada
 │   ├── common/
-│   │   └── utils.py                 # Helpers: logging, Spark utils
+│   │   └── utils.py                    # Logging, helpers Spark
 │   ├── bronze/
-│   │   ├── ingest.py          # Raw load, add metadata
-│   │   └── upload.py                # Write to Delta bronze tables
+│   │   ├── ingest.py                  # Raw load + metadata
+│   │   └── upload.py                  # Escrita Delta Bronze
 │   ├── silver/
-│   │   ├── base.py
+│   │   ├── base.py                    # Regras genéricas
 │   │   ├── registry.py
 │   │   ├── categories.py
 │   │   ├── customers.py
@@ -62,26 +73,23 @@ data-lake-databricks/
 │   │   ├── stores.py
 │   │   └── stocks.py
 │   ├── gold/
-│   │   ├── treat.py                 # Aggregate business logic
-│   │   └── upload.py                # Write gold tables
-├── notebooks/                       # Optional: interactive testing
+│   │   ├── treat.py                   # Regras de negócio / agregações
+│   │   └── upload.py                  # Escrita Delta Gold
+├── notebooks/
 │   ├── 00_setup/
-│   │   └── 00_infrastructure.ipynb  # Write to Delta bronze 00_infrastructure
+│   │   └── 00_infrastructure.ipynb
 │   ├── 01_bronze/
 │   │   ├── 01_bronze_pipeline.ipynb  
-│   │   └── 02_validation_bronze.ipynb  # Data quality checks
+│   │   └── 02_validation_bronze.ipynb
 │   ├── 02_silver/
 │   │   └── 01_silver_pipeline.ipynb  
 │   └── 03_gold/
-│       └── 
-├── resources/                       # Databricks Jobs JSON defs 
+│       └── 01_gold_pipeline.ipynb
+├── resources/
 │   └── jobs/
 │       └── bikestore_lakehouse.yml
-├── tests/                           # Pytest for src modules
-└── data/                            # Samples for local dev
-
-
-
+├── tests/
+└── data/
 ```
 
 ---
@@ -92,10 +100,11 @@ data-lake-databricks/
 
 A camada Bronze é responsável por:
 
-* ingerir dados brutos (JSON)
-* preservar o formato original
-* garantir rastreabilidade
-* armazenar dados em **Delta Lake**
+* ingestão de dados brutos (JSON)
+* preservação do formato original
+* rastreabilidade completa
+* armazenamento em **Delta Lake**
+* ingestão incremental
 
 Cada tabela é ingerida de forma **independente**, via parâmetro `table_name`.
 
@@ -131,11 +140,11 @@ Parâmetro:
 
 ## Validação Bronze
 
-Após a ingestão, um job de validação executa verificações básicas, como:
+Após a ingestão, um job de validação executa verificações básicas:
 
 * existência de dados
-* leitura das tabelas Delta
-* consistência mínima de schemas
+* leitura correta das tabelas Delta
+* consistência mínima de schema
 
 Notebook:
 
@@ -145,11 +154,11 @@ notebooks/01_bronze/02_validation_bronze
 
 ---
 
-## Silver Layer – Dados Confiáveis (Trusted)
+## Silver Layer – Dados Confiáveis (Trusted Data)
 
 ### Princípios da Silver
 
-A camada Silver segue os princípios de **Trusted Data**:
+A camada Silver aplica regras de **qualidade e padronização**, garantindo:
 
 * limpeza de dados
 * remoção de registros inválidos
@@ -163,8 +172,8 @@ Cada tabela Bronze gera **uma tabela Silver correspondente**.
 
 ### Padrão de Implementação
 
-* **Regras genéricas** ficam em `silver/base.py`
-* **Regras específicas** por entidade ficam em arquivos dedicados
+* Regras genéricas: `silver/base.py`
+* Regras específicas por entidade: arquivos dedicados
 
 Exemplo:
 
@@ -180,7 +189,7 @@ Funções comuns:
 
 ---
 
-### Colunas de Metadados
+### Metadados
 
 Todas as tabelas Silver possuem:
 
@@ -188,11 +197,30 @@ Todas as tabelas Silver possuem:
 | ------------ | ------------------------------- |
 | ingestion_ts | Timestamp da ingestão na Silver |
 
-Essas colunas permitem:
+Essas colunas suportam:
 
 * auditoria
 * troubleshooting
-* rastreabilidade
+* rastreabilidade ponta a ponta
+
+---
+
+## Gold Layer – Camada de Negócio
+
+A camada Gold consolida os dados Silver em **tabelas orientadas ao consumo**, aplicando regras de negócio, métricas e agregações.
+
+Características:
+
+* métricas prontas para BI
+* dados agregados e otimizados
+* menor cardinalidade
+* foco em consumo analítico
+
+Implementação:
+
+* regras em `src/gold/treat.py`
+* escrita Delta em `src/gold/upload.py`
+* notebooks em `notebooks/03_gold`
 
 ---
 
@@ -201,43 +229,35 @@ Essas colunas permitem:
 O pipeline é orquestrado via **Databricks Jobs (YAML)**, com:
 
 * uma task por tabela
-* dependências explícitas
-* separação clara entre Bronze e Silver
+* dependências explícitas entre camadas
+* execução paralela quando possível
 
 Fluxo:
 
-1. Ingestão Bronze (paralela)
+1. Ingestão Bronze
 2. Validação Bronze
-3. Transformação Silver (paralela)
+3. Transformação Silver
+4. Transformação Gold
 
 ---
 
 ## Estratégia de Escopo
 
-Este projeto foi desenhado como:
+Este projeto segue o conceito de:
 
-> **Produto de dados de escopo fechado**
+> **Produto de Dados de Escopo Fechado**
 
-Isso significa:
+Benefícios:
 
 * entidades bem definidas
-* pipelines explícitos
-* menor complexidade operacional
-* maior previsibilidade de custo
+* pipelines previsíveis
+* menor custo operacional
+* fácil manutenção
 
-Caso o escopo evolua, o desenho permite:
+O desenho permite evolução para:
 
-* inclusão de novas entidades
-* expansão para camada Gold
-* criação de Feature Store
-
----
-
-## Próximos Passos
-
-* Implementação da camada **Gold**
-* Criação do **Book de Variáveis**
-* Métricas de qualidade avançadas
-* Monitoramento e alertas
-
+* novas entidades
+* métricas adicionais
+* Feature Store
+* modelos de Machine Learning
 
