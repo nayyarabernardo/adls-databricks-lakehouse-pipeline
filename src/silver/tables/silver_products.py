@@ -1,18 +1,21 @@
 from pyspark.sql import functions as F
-from src.silver.setup.base import read_bronze, write_silver, add_ingestion_columns
+from pyspark.sql import SparkSession
+
+from src.silver.setup.base import add_ingestion_columns, read_bronze, write_silver
+
 
 def build_products_silver(
-    spark,
+    spark: SparkSession,
     bronze_path: str,
     silver_table: str,
-    silver_path: str
-):
+    silver_path: str,
+) -> None:
+    """Constrói a tabela de produtos na camada Silver."""
     # ===== Reads =====
     df_products = read_bronze(spark, bronze_path)
     df_brands = read_bronze(spark, bronze_path.replace("products", "brands"))
     df_categories = read_bronze(spark, bronze_path.replace("products", "categories"))
     df_stocks = read_bronze(spark, bronze_path.replace("products", "stocks"))
-    
 
     # ===== Stock agregado =====
     df_stock = (
@@ -51,8 +54,8 @@ def build_products_silver(
         .select(
             "product_id",
             "product_name",
-            F.col("b.brand_name"),
-            F.col("c.category_name"),
+            F.col("b.brand_name").alias("brand_name"),
+            F.col("c.category_name").alias("category_name"),
             "model_year",
             "list_price",
             "total_stock"

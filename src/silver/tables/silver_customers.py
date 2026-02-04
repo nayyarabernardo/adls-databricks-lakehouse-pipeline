@@ -1,12 +1,16 @@
 from pyspark.sql import functions as F
-from src.silver.setup.base import read_bronze, write_silver, add_ingestion_columns
+from pyspark.sql import SparkSession
+
+from src.silver.setup.base import add_ingestion_columns, read_bronze, write_silver
+
 
 def build_customers_silver(
-    spark,
+    spark: SparkSession,
     bronze_path: str,
     silver_table: str,
-    silver_path: str
-):
+    silver_path: str,
+) -> None:
+    """Constrói a tabela de clientes na camada Silver."""
     # ===== Read =====
     df_customers = read_bronze(spark, bronze_path)
 

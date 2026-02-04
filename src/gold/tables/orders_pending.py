@@ -1,13 +1,17 @@
 from pyspark.sql import functions as F
+from pyspark.sql import SparkSession
+
 from src.common.base import read_delta
-from src.gold.setup.base import write_gold, add_gold_metadata
+from src.gold.setup.base import add_gold_metadata, write_gold
+
 
 def build_orders_pending_gold(
-    spark,
+    spark: SparkSession,
     silver_base_path: str,
     gold_table: str,
-    gold_path: str
-):
+    gold_path: str,
+) -> None:
+    """Constrói o dataset de pedidos pendentes com dados de contato."""
     # ===== Read Silver =====
     df_orders = read_delta(spark, f"{silver_base_path}/orders")
     df_customers = read_delta(spark, f"{silver_base_path}/customers")
@@ -47,8 +51,8 @@ def build_orders_pending_gold(
             "store_name",
             "total_items",
             F.col("c.first_name").alias("first_name_customer"),
-            "c.email",
-            "c.phone"
+            F.col("c.email").alias("email"),
+            F.col("c.phone").alias("phone"),
         )
     )
 

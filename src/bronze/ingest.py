@@ -1,8 +1,15 @@
-from src.common.utils import load_json
+from pyspark.sql import SparkSession
+
 from src.bronze.upload import ingest_table
+from src.common.utils import load_json
 from src.config.settings import METADATA_BASE_PATH
 
-def run_bronze_ingestion(spark, table_name: str | None = None):
+
+def run_bronze_ingestion(
+    spark: SparkSession,
+    table_name: str | None = None,
+) -> None:
+    """Processa os arquivos de metadata e ingere tabelas Bronze."""
     metadata_path = f"{METADATA_BASE_PATH}/bronze"
 
     try:

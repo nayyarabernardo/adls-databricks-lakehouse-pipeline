@@ -1,12 +1,16 @@
 from pyspark.sql import functions as F
-from src.gold.setup.base import read_silver, write_gold, add_gold_metadata
+from pyspark.sql import SparkSession
+
+from src.gold.setup.base import add_gold_metadata, read_silver, write_gold
+
 
 def build_sales_ny_gold(
-    spark,
+    spark: SparkSession,
     silver_base_path: str,
     gold_table: str,
-    gold_path: str
-):
+    gold_path: str,
+) -> None:
+    """Constrói o agregado de vendas entregues em NY."""
     # ===== Read Silver =====
     df_orders = read_silver(
         spark,

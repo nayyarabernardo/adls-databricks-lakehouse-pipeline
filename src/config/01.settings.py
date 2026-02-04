@@ -1,4 +1,4 @@
-# src/config/settings.py
+# Template: copie para src/config/settings.py antes de executar.
 
 # Configurações do Azure Storage
 STORAGE_ACCOUNT_NAME = "{STORAGE_ACCOUNT_NAME}"
