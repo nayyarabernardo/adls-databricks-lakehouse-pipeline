@@ -1,62 +1,34 @@
-# from pyspark.sql import functions as F
+from pyspark.sql import DataFrame, SparkSession, functions as F
 
-# def read_delta(spark, path: str):
-#     return spark.read.format("delta").load(path)
 
-# def add_ingestion_columns(df):
-#     return df.withColumn("ingestion_ts", F.current_timestamp())
-
-# def write_delta_table(
-#     spark,
-#     df,
-#     table_full_name: str,
-#     path: str
-# ):
-#     (
-#         df.write
-#         .format("delta")
-#         .mode("overwrite")
-#         .option("overwriteSchema", "true")
-#         .save(path)
-#     )
-
-#     spark.sql(f"""
-#         CREATE TABLE IF NOT EXISTS {table_full_name}
-#         USING DELTA
-#         LOCATION '{path}'
-#     """)
-from pyspark.sql import functions as F
-from pyspark.sql.utils import AnalysisException
-
-def read_delta(spark, path: str):
+def read_delta(spark: SparkSession, path: str) -> DataFrame:
+    """Lê um dataset Delta no caminho informado."""
     return spark.read.format("delta").load(path)
 
-def add_ingestion_columns(df):
+
+def add_ingestion_columns(df: DataFrame) -> DataFrame:
+    """Adiciona a coluna de timestamp de ingestão."""
     return df.withColumn("ingestion_ts", F.current_timestamp())
 
-def write_delta_table(
-    spark,
-    df,
-    table_full_name: str,
-    path: str
-):
-    # 🔒 garante que o path não existe sujo
-    try:
-        spark.read.format("delta").load(path)
-        table_exists = True
-    except AnalysisException:
-        table_exists = False
 
+def write_delta_table(
+    spark: SparkSession,
+    df: DataFrame,
+    table_full_name: str,
+    path: str,
+) -> None:
+    """Escreve DataFrame em Delta e registra a tabela."""
     (
-        df.write
-        .format("delta")
+        df.write.format("delta")
         .mode("overwrite")
         .option("overwriteSchema", "true")
         .save(path)
     )
 
-    spark.sql(f"""
+    spark.sql(
+        f"""
         CREATE TABLE IF NOT EXISTS {table_full_name}
         USING DELTA
         LOCATION '{path}'
-    """)
+        """
+    )

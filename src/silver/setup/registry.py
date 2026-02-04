@@ -1,6 +1,6 @@
 from src.silver.tables.silver_customers import build_customers_silver
 from src.silver.tables.silver_products import build_products_silver
-from src.silver.tables.silver_orders import build_orders_silver 
+from src.silver.tables.silver_orders import build_orders_silver
 
 
 SILVER_TABLES = {
@@ -9,7 +9,7 @@ SILVER_TABLES = {
         "bronze_suffix": "customers",
         "silver_suffix": "customers",
         "silver_table": "bikestore.logistics.silver_customers",
-    }, 
+    },
     "products": {
         "builder": build_products_silver,
         "bronze_suffix": "products",
@@ -22,4 +22,4 @@ SILVER_TABLES = {
         "silver_suffix": "orders",
         "silver_table": "bikestore.logistics.silver_orders",
     }
- }
+}

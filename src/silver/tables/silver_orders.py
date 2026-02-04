@@ -1,12 +1,16 @@
 from pyspark.sql import functions as F
-from src.silver.setup.base import read_bronze, write_silver, add_ingestion_columns
+from pyspark.sql import SparkSession
+
+from src.silver.setup.base import add_ingestion_columns, read_bronze, write_silver
+
 
 def build_orders_silver(
-    spark,
+    spark: SparkSession,
     bronze_path: str,
     silver_table: str,
-    silver_path: str
-):
+    silver_path: str,
+) -> None:
+    """Constrói a tabela de pedidos na camada Silver."""
     # ===== Reads =====
     df_orders = read_bronze(spark, bronze_path)
     df_order_items = read_bronze(spark, bronze_path.replace("orders", "order_items"))
@@ -64,12 +68,12 @@ def build_orders_silver(
             "shipped_date",
 
             F.col("st.store_name"),
-            F.col("st.state"),
-            F.col("st.city"),
+            F.col("st.state").alias("state"),
+            F.col("st.city").alias("city"),
 
             F.col("stf.first_name").alias("first_name_staff"),
             F.col("stf.active").alias("active_staff"),
-            F.col("stf.email"),
+            F.col("stf.email").alias("email"),
 
             "product_id",
             "quantity",

@@ -1,18 +1,23 @@
-from pyspark.sql import functions as F
-from pyspark.sql import DataFrame
+from pyspark.sql import DataFrame, SparkSession, functions as F
 
-def read_silver(spark, path: str) -> DataFrame:
+
+def read_silver(spark: SparkSession, path: str) -> DataFrame:
+    """Lê dados da camada Silver."""
     return spark.read.format("delta").load(path)
 
+
 def add_gold_metadata(df: DataFrame) -> DataFrame:
+    """Adiciona metadados de ingestão na camada Gold."""
     return df.withColumn("gold_ingestion_ts", F.current_timestamp())
 
+
 def write_gold(
-    spark,
+    spark: SparkSession,
     df: DataFrame,
     table_full_name: str,
-    path: str
-):
+    path: str,
+) -> None:
+    """Escreve dados na camada Gold e registra tabela."""
     (
         df.write
         .format("delta")
@@ -21,8 +26,10 @@ def write_gold(
         .save(path)
     )
 
-    spark.sql(f"""
+    spark.sql(
+        f"""
         CREATE TABLE IF NOT EXISTS {table_full_name}
         USING DELTA
         LOCATION '{path}'
-    """)
+        """
+    )
